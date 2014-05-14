@@ -1,6 +1,8 @@
 library(reshape2)
 
-mergeAndExtractData <- function( directory ) {
+# this function is to load data into memory, merge test and train dataset, extract useful data features
+# return dataset for analysis
+MergeAndExtractData <- function( directory ) {
   
   feathers <- read.table(paste0(directory, "/features.txt"))
   useful_feathers <- feathers[grep("mean\\(\\)|std\\(\\)", feathers[,2]), ]
@@ -25,7 +27,9 @@ mergeAndExtractData <- function( directory ) {
   all_data
 }
 
-getTidyData <- function(data) {
+# this function is to create independent tidy data set with the average of each variable for each activity 
+# and each subject. 
+GetTidyData <- function(data) {
   groupData <- melt(data, id.vars = c("subject", "activity_id", "activity_label"))
   groupData$value <- as.numeric(groupData$value)
   meanData <- aggregate(value~subject+activity_id+activity_label+variable, data=groupData, FUN=mean)
@@ -33,7 +37,8 @@ getTidyData <- function(data) {
   tidyData
 }
 
-writeTidyData <- function(data, filename) {
+# write the tidy data into file
+WriteTidyData <- function(data, filename) {
   write.table(data, file=filename, quote=FALSE, sep = " ", row.names=FALSE)
 }
 
